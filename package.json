@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "express": "4.9.x",
+    "socket.io": "latest",
+    "mongoose": "^5.4.11"
+  },
+  "scripts": {
+    "start": "node index"
+  }
+}
