@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  
+</head>
+<body>
+  <form action="/api/item" method="POST">
+    Item name: <br>
+    <input type="text" name="name"><br>
+    Item description: <br>
+    <input type="text" name="description"><br>
+    Category: <br>
+    <select id="category-dropdown" name="category"></select><br>
+    Current price <br>
+    <input type="text" name="price"><br>
+    <input type="submit" value="Submit">
+  </form>
+
+  <canvas id="myChart"></canvas>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+  <script src="/main.js"></script>
+</body>
+</html>
