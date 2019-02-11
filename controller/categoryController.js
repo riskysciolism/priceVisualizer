@@ -10,9 +10,9 @@ function createCategory(request, response, next) {
     newCategory.save().then(data => response.json(data)).catch(next);
 }
 
-function getCategories(request, response, next) {
+function getCategories() {
     category.find().then(data => {
-        response.json(data);
+        return data;
     });
 }
 

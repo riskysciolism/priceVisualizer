@@ -6,6 +6,7 @@ const port = process.env.PORT || 3000;
 const mongoose = require('mongoose');
 const path = require('path');
 const item = require('./controller/itemController');
+const category = require('./controller/categoryController');
 
 module.exports = app;
 
@@ -52,9 +53,13 @@ async function onConnection(socket){
   await item.createItem(1, "Beer", "Drink");
 
   console.log("Socket connected..");
-  socket.emit('connected', item.getItems());
+  socket.emit('connected', item.getItemPrices("Beer"));
 }
 
-io.on('connection', onConnection);
+io.on('connection', function (socket) {
+  console.log(category.getCategories());
+  socket.emit('dropdownData', );
+});
+
 
 http.listen(port, () => console.log('listening on port ' + port));
