@@ -5,7 +5,7 @@ const io = require('socket.io')(http);
 const port = process.env.PORT || 3000;
 const mongoose = require('mongoose');
 const path = require('path');
-const item = require('./controller/itemController')
+const item = require('./controller/itemController');
 
 module.exports = app;
 
@@ -13,7 +13,6 @@ console.log('Node running..');
 
 configureExpress();
 configureDatabase();
-
 
 function configureExpress() {
   app.use(express.static(path.join(__dirname, 'public')));
@@ -37,7 +36,7 @@ function configureExpress() {
 
 function configureDatabase(){
   mongoose.connect('mongodb://localhost:27017/test', { useNewUrlParser: true });
-  var db = mongoose.connection;
+  let db = mongoose.connection;
 
   // Bind connection to error event (to get notification of connection errors)
   db.on('error', console.error.bind(console, 'connection error: '));
@@ -47,13 +46,14 @@ function configureDatabase(){
   });
 }
 
-function onConnection(socket){
-  console.log("first: " + item.getItemPrices('Water'));
-  socket.emit('connected', item.getItemPrices('Water'));
+
+
+async function onConnection(socket){
+  await item.createItem(1, "Beer", "Drink");
+
   console.log("Socket connected..");
+  socket.emit('connected', item.getItems());
 }
-
-
 
 io.on('connection', onConnection);
 

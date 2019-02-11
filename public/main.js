@@ -4,7 +4,7 @@ var socket = io();
 var ctx = document.getElementById('myChart').getContext('2d');
 
 socket.on('connected', chartData => {
-  console.log(JSON.stringify(chartData));
+  console.log("Data: " + JSON.stringify(chartData));
   makeChart(chartData);
   populateDroplist();
 });
@@ -37,7 +37,7 @@ function populateDroplist() {
     } else {
       // Reached the server, but it returned an error
     }
-  }
+  };
 
   request.onerror = function() {
     console.error('An error occurred fetching the JSON from ' + url);

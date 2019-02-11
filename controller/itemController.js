@@ -1,14 +1,25 @@
 const item = require('../models/itemModel');
 
 function getItems() {
+    let payload = {
+        labels: [],
+        datasets:[{
+            label: "",
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: []
+        }]
+    };
     item.find().then(data =>
         {
-            return JSON(data);
+           payload = data;
         }
     );
+    return payload;
 }
 
 function getItemPrices(name) {
+    let payload = {};
     item.findOne({name: name}).then(data => {
         let labels = [];
         let itemPrices = [];
@@ -17,38 +28,33 @@ function getItemPrices(name) {
             itemPrices.push(data.price[i].value);
             labels.push(data.price[i].timestamp);
         }
-
-        let payload = {
+        payload = {
             labels: labels,
             datasets:[{
-                label: data.name,
+                label: name,
                 backgroundColor: 'rgb(255, 99, 132)',
                 borderColor: 'rgb(255, 99, 132)',
                 data: itemPrices
             }]
         };
-
-        return payload;
-    })
+    });
+    return payload;
 }
 
 
-async function createItem(request, response, next) {
+function createItem(price, name, description, category) {
     console.log("Add Item");
-    console.log(request.body.price);
-
-    let requestData = request.body;
     let newItem = new item({
-        name: requestData.name,
-        description: requestData.description,
-        category: requestData.category,
+        name: name,
+        description: description,
+        category: category,
         price: [{
-            value: requestData.price
+            value: price
         }]
     });
 
-    await newItem.save().then(data => {
-        response.json(data)
+    newItem.save().then(data => {
+        console.log(data);
     });
 }
 
