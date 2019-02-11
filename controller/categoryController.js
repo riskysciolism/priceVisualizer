@@ -1,17 +1,20 @@
 const category = require('../models/categoryModel');
 
-function createCategory(request, response, next) {
+function createCategory(name, description) {
     console.log("Add category");
-    console.log(request.body);
+    let requestData = {
+      name: name,
+      description: description
+    };
 
-    let requestData = request.body;
     let newCategory = new category(requestData);
 
-    newCategory.save().then(data => response.json(data)).catch(next);
+    newCategory.save().then(data => console.log(data)).catch(error);
 }
 
 function getCategories() {
     category.find().then(data => {
+        console.log(data);
         return data;
     });
 }

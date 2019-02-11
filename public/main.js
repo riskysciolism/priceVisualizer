@@ -9,7 +9,7 @@ socket.on('connected', chartData => {
 });
 
 socket.on('dropdownData', data => {
-  console.log(data);
+  console.log("Dropdown :" + data);
   populateDroplist(data);
 });
 

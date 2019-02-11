@@ -49,17 +49,17 @@ function configureDatabase(){
 
 
 
-async function onConnection(socket){
-  await item.createItem(1, "Beer", "Drink");
+function onConnection(socket){
+ /* await item.createItem(1, "Beer", "Drink");
 
   console.log("Socket connected..");
-  socket.emit('connected', item.getItemPrices("Beer"));
+  socket.emit('connected', item.getItemPrices("Beer"));*/
+
+  console.log(category.getCategories());
+
+  socket.emit('dropdownData', category.getCategories());
 }
 
-io.on('connection', function (socket) {
-  console.log(category.getCategories());
-  socket.emit('dropdownData', );
-});
-
+io.on('connection', onConnection);
 
 http.listen(port, () => console.log('listening on port ' + port));
