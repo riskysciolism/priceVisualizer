@@ -36,7 +36,7 @@ function populateDroplist() {
       }
     } else {
       // Reached the server, but it returned an error
-    }   
+    }
   }
 
   request.onerror = function() {

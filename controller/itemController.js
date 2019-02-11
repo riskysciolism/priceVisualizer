@@ -1,9 +1,9 @@
 const item = require('../models/itemModel');
 
 function getItems() {
-    item.find().then(data => 
+    item.find().then(data =>
         {
-        return JSON(data);
+            return JSON(data);
         }
     );
 }
@@ -17,7 +17,7 @@ function getItemPrices(name) {
             itemPrices.push(data.price[i].value);
             labels.push(data.price[i].timestamp);
         }
-        
+
         let payload = {
             labels: labels,
             datasets:[{
@@ -46,7 +46,7 @@ async function createItem(request, response, next) {
             value: requestData.price
         }]
     });
-    
+
     await newItem.save().then(data => {
         response.json(data)
     });
