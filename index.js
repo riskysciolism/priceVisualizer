@@ -55,6 +55,7 @@ async function onConnection(socket){
 
   socket.on('newItem', async data => {
     await newItem(data.name, data.description, data.category, data.price);
+    await getDropdownData(socket);
   });
 }
 
@@ -72,6 +73,7 @@ function newCategory(name, description) {
 
 async function newItem(name, description, category, price) {
   await itemController.createItem(name, description, category, price);
+
 }
 
 io.on('connection', onConnection);
