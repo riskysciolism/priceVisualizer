@@ -3,24 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <title></title>
-
 </head>
 <body>
-<form action="/api/item" method="POST">
+<form action="">
   Item name: <br>
-  <input type="text" name="name"><br>
+  <input id="name" autocomplete="off" /><br>
   Item description: <br>
-  <input type="text" name="description"><br>
+  <input id="description" autocomplete="off"/><br>
   Category: <br>
-  <select id="category-dropdown" name="category"></select><br>
+  <select id="category-dropdown"></select><br>
   Current price <br>
-  <input type="text" name="price"><br>
-  <input type="submit" value="Submit">
-  <input type="text" name="fetchItem"><br>
+  <input id="price" autocomplete="off"><br>
+  <button onclick="createNewItem(); return false;">Send</button><br><br>
+  Item to fetch/update <br>
+  <select id="item-dropdown"></select><br>
+
+  <input id="updatedPrice" autocomplete="off"><br>
+  <button onclick="newPrice(); return false;">Update Price</button>
+  <button onclick="showData(); return false;">Show data</button>
 </form>
 
 <button onclick="createNewCategory()">New category</button>
-<button onclick="showData('Water')">Show data</button>
 
 <canvas id="myChart"></canvas>
 

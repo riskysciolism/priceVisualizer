@@ -2,23 +2,45 @@
 
 var socket = io();
 var ctx = document.getElementById('myChart').getContext('2d');
-
+var chart;
 function createNewCategory() {
   socket.emit('newCategory');
 }
 
-function showData(item) {
-  socket.emit('fetch', item);
+function newPrice() {
+  let data = {
+    id: document.getElementById('item-dropdown').value,
+    price: document.getElementById('updatedPrice').value
+  };
+  socket.emit('updatePrice', data);
 }
 
-socket.on('connected', chartData => {
+function showData() {
+  socket.emit('fetch', document.getElementById('item-dropdown').value);
+}
 
+function createNewItem(){
+  console.log("Clicked");
+  let data = {
+    name: document.getElementById('name').value,
+    description: document.getElementById('description').value,
+    category: document.getElementById('category-dropdown').value,
+    price: document.getElementById('price').value
+  };
+  socket.emit('newItem', data);
+  alert("Item created.");
+}
+
+//---------------------Server answer
+
+socket.on('connected', chartData => {
 
 });
 
 socket.on('dropdownData', data => {
   console.log("Dropdown: " + JSON.stringify(data));
-  populateDroplist(data);
+  populateDroplist(data.categories, "category-dropdown");
+  populateDroplist(data.items, "item-dropdown");
 });
 
 socket.on('items', data => {
@@ -31,12 +53,13 @@ socket.on('dataFetched', data => {
 });
 
 socket.on('priceUpdated', data => {
-  console.log("New price: " + data);
-
+  console.log("Data: " + data);
+  console.log("New price: " + data.value);
+  addData(chart, data.timestamp, data.value);
 });
 
-function populateDroplist(data) {
-  let dropdown = document.getElementById('category-dropdown');
+function populateDroplist(data, dropdownVersion) {
+  let dropdown = document.getElementById(dropdownVersion);
   dropdown.length = 0;
 
   let defaultOption = document.createElement('option');
@@ -63,7 +86,7 @@ function addData(chart, label, data) {
 }
 
 function makeChart(chartData) {
-  new Chart(ctx, {
+  chart = new Chart(ctx, {
     type: 'line',
     data: chartData,
     options: {}

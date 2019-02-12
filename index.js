@@ -6,7 +6,7 @@ const port = process.env.PORT || 3000;
 const mongoose = require('mongoose');
 const path = require('path');
 const itemController = require('./controller/itemController');
-const category = require('./controller/categoryController');
+const categoryController = require('./controller/categoryController');
 
 module.exports = app;
 
@@ -19,7 +19,6 @@ function configureExpress() {
   app.use(express.static(path.join(__dirname, 'public')));
   console.log('Express configured..');
 }
-
 function configureDatabase(){
   mongoose.connect('mongodb://localhost:27017/test', { useNewUrlParser: true });
   let db = mongoose.connection;
@@ -32,17 +31,14 @@ function configureDatabase(){
   });
 }
 
+//TODO Refactor socket events into own file
+//--------------------Socket events
 async function onConnection(socket){
   console.log("Socket connected");
-  //let items = await item.getItems();
-  let items = await itemController.getItemPrices("Water");
-  socket.emit('items', items);
-
-  await getCategories(socket);
+  await getDropdownData(socket);
   socket.on('newCategory',async () => {
-    console.log("click");
     await newCategory();
-    await getCategories(socket);
+    await getDropdownData(socket);
   });
 
   socket.on('fetch', async item => {
@@ -52,20 +48,30 @@ async function onConnection(socket){
 
   socket.on('updatePrice', async data => {
     let newPrice = data.price;
-    let itemName = data.name;
+    let itemId = data.id;
+    await itemController.updatePrice(itemId, newPrice);
+    io.emit('priceUpdated', await itemController.getNewestPrice(itemId));
+  });
 
-    itemController.updatePrice(itemName, newPrice);
-    io.emit('priceUpdated', newPrice);
+  socket.on('newItem', async data => {
+    await newItem(data.name, data.description, data.category, data.price);
   });
 }
 
-async function getCategories(socket) {
-  let data = await category.getCategories();
+async function getDropdownData(socket) {
+  let data = {
+    categories: await categoryController.getCategories(),
+    items: await itemController.getItems()
+  };
   socket.emit('dropdownData', data);
 }
 
 function newCategory(name, description) {
-  category.createCategory("wow", "yeah");
+  categoryController.createCategory("wow", "yeah");
+}
+
+async function newItem(name, description, category, price) {
+  await itemController.createItem(name, description, category, price);
 }
 
 io.on('connection', onConnection);
