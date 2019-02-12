@@ -3,14 +3,36 @@
 var socket = io();
 var ctx = document.getElementById('myChart').getContext('2d');
 
+function createNewCategory() {
+  socket.emit('newCategory');
+}
+
+function showData(item) {
+  socket.emit('fetch', item);
+}
+
 socket.on('connected', chartData => {
-  console.log("Data: " + JSON.stringify(chartData));
-  makeChart(chartData);
+
+
 });
 
 socket.on('dropdownData', data => {
-  console.log("Dropdown :" + data);
+  console.log("Dropdown: " + JSON.stringify(data));
   populateDroplist(data);
+});
+
+socket.on('items', data => {
+  console.log("Items: " + JSON.stringify(data));
+});
+
+socket.on('dataFetched', data => {
+  console.log("Fetched data: " + JSON.stringify(data));
+  makeChart(data);
+});
+
+socket.on('priceUpdated', data => {
+  console.log("New price: " + data);
+
 });
 
 function populateDroplist(data) {
@@ -30,6 +52,14 @@ function populateDroplist(data) {
     option.value = data[i]._id;
     dropdown.add(option);
   }
+}
+
+function addData(chart, label, data) {
+  chart.data.labels.push(label);
+  chart.data.datasets.forEach((dataset) => {
+    dataset.data.push(data);
+  });
+  chart.update();
 }
 
 function makeChart(chartData) {

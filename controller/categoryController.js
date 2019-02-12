@@ -9,14 +9,11 @@ function createCategory(name, description) {
 
     let newCategory = new category(requestData);
 
-    newCategory.save().then(data => console.log(data)).catch(error);
+    newCategory.save().then(data => console.log(data)).catch(error => console.log(error));
 }
 
-function getCategories() {
-    category.find().then(data => {
-        console.log(data);
-        return data;
-    });
+async function getCategories() {
+    return await category.find().exec();
 }
 
 module.exports = {

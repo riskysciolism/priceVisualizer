@@ -1,26 +1,12 @@
-const item = require('../models/itemModel');
+const itemModel = require('../models/itemModel');
 
-function getItems() {
-    let payload = {
-        labels: [],
-        datasets:[{
-            label: "",
-            backgroundColor: 'rgb(255, 99, 132)',
-            borderColor: 'rgb(255, 99, 132)',
-            data: []
-        }]
-    };
-    item.find().then(data =>
-        {
-           payload = data;
-        }
-    );
-    return payload;
+async function getItems() {
+    return await itemModel.find().exec();
 }
 
-function getItemPrices(name) {
+async function getItemPrices(name) {
     let payload = {};
-    item.findOne({name: name}).then(data => {
+    await itemModel.findOne({name: name}).then(data => {
         let labels = [];
         let itemPrices = [];
 
@@ -37,6 +23,8 @@ function getItemPrices(name) {
                 data: itemPrices
             }]
         };
+    }).catch(error => {
+        console.log(error);
     });
     return payload;
 }
@@ -44,7 +32,7 @@ function getItemPrices(name) {
 
 function createItem(price, name, description, category) {
     console.log("Add Item");
-    let newItem = new item({
+    let newItem = new itemModel({
         name: name,
         description: description,
         category: category,
@@ -59,7 +47,7 @@ function createItem(price, name, description, category) {
 }
 
 function updatePrice(name, price) {
-    item.findOneAndUpdate(
+    itemModel.findOneAndUpdate(
         {name: name},
         {
             $push: { 'item.price.value': price }
@@ -70,5 +58,6 @@ function updatePrice(name, price) {
 module.exports = {
     getItems: getItems,
     getItemPrices: getItemPrices,
-    createItem: createItem
+    createItem: createItem,
+    updatePrice: updatePrice
 };

@@ -5,7 +5,7 @@ const io = require('socket.io')(http);
 const port = process.env.PORT || 3000;
 const mongoose = require('mongoose');
 const path = require('path');
-const item = require('./controller/itemController');
+const itemController = require('./controller/itemController');
 const category = require('./controller/categoryController');
 
 module.exports = app;
@@ -17,21 +17,6 @@ configureDatabase();
 
 function configureExpress() {
   app.use(express.static(path.join(__dirname, 'public')));
-  /*app.use(function(req, res, next) {
-      res.header("Access-Control-Allow-Origin", "*");
-      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-      res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-      next();
-  });
-  // Use body parser so we can get info from POST and/or URL parameters.
-  app.use(bodyParser.urlencoded({ extended: false }));
-  app.use(bodyParser.json({limit: "8mb"}));
-  // Use morgan to log requests to the console.
-  app.use(morgan('dev'));
-  //app.use(express.static(__dirname + '/public'));
-  app.use('/api/item', item);
-  app.use('/api/category', category);
-  */
   console.log('Express configured..');
 }
 
@@ -47,17 +32,40 @@ function configureDatabase(){
   });
 }
 
+async function onConnection(socket){
+  console.log("Socket connected");
+  //let items = await item.getItems();
+  let items = await itemController.getItemPrices("Water");
+  socket.emit('items', items);
 
+  await getCategories(socket);
+  socket.on('newCategory',async () => {
+    console.log("click");
+    await newCategory();
+    await getCategories(socket);
+  });
 
-function onConnection(socket){
- /* await item.createItem(1, "Beer", "Drink");
+  socket.on('fetch', async item => {
+    let fetchedItem = await itemController.getItemPrices(item);
+    socket.emit('dataFetched',fetchedItem)
+  });
 
-  console.log("Socket connected..");
-  socket.emit('connected', item.getItemPrices("Beer"));*/
+  socket.on('updatePrice', async data => {
+    let newPrice = data.price;
+    let itemName = data.name;
 
-  console.log(category.getCategories());
+    itemController.updatePrice(itemName, newPrice);
+    io.emit('priceUpdated', newPrice);
+  });
+}
 
-  socket.emit('dropdownData', category.getCategories());
+async function getCategories(socket) {
+  let data = await category.getCategories();
+  socket.emit('dropdownData', data);
+}
+
+function newCategory(name, description) {
+  category.createCategory("wow", "yeah");
 }
 
 io.on('connection', onConnection);
