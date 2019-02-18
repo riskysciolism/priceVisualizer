@@ -38,7 +38,6 @@ socket.on('connected', chartData => {
 });
 
 socket.on('dropdownData', data => {
-  console.log("Dropdown: " + JSON.stringify(data));
   populateDroplist(data.categories, "category-dropdown");
   populateDroplist(data.items, "item-dropdown");
 });
@@ -89,7 +88,8 @@ function makeChart(chartData) {
   chart = new Chart(ctx, {
     type: 'line',
     data: chartData,
-    options: {}
+    options: {
+    }
   });
 }
 
